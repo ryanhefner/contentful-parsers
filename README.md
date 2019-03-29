@@ -43,7 +43,7 @@ const client = contentful.createClient({
   accessToken: '',
 });
 
-const response = client.getEntry('[ENTRY_ID]');
+const response = await client.getEntry('[ENTRY_ID]');
 const data = fieldsParser(response);
 ```
 
