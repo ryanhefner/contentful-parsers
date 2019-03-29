@@ -1,25 +1,25 @@
 # 🧰 contentful-parsers
 
-[![npm version](https://badge.fury.io/js/contenful-parsers.svg)](https://badge.fury.io/js/contenful-parsers)
+[![npm version](https://badge.fury.io/js/contentful-parsers.svg)](https://badge.fury.io/js/contentful-parsers)
 [![npm](https://img.shields.io/npm/l/express.svg)](LICENSE)
-[![Coverage Status](https://coveralls.io/repos/github/ryanhefner/contenful-parsers/badge.svg?branch=master)](https://coveralls.io/github/ryanhefner/contenful-parsers?branch=master)
-[![CircleCI](https://circleci.com/gh/ryanhefner/contenful-parsers.svg?style=shield)](https://circleci.com/gh/ryanhefner/contenful-parsers)
-[![Greenkeeper badge](https://badges.greenkeeper.io/ryanhefner/contenful-parsers.svg)](https://greenkeeper.io/)
+[![Coverage Status](https://coveralls.io/repos/github/ryanhefner/contentful-parsers/badge.svg?branch=master)](https://coveralls.io/github/ryanhefner/contentful-parsers?branch=master)
+[![CircleCI](https://circleci.com/gh/ryanhefner/contentful-parsers.svg?style=shield)](https://circleci.com/gh/ryanhefner/contentful-parsers)
+[![Greenkeeper badge](https://badges.greenkeeper.io/ryanhefner/contentful-parsers.svg)](https://greenkeeper.io/)
 
 Toolbox of useful parsers to use when working with Contentful API responses.
 
 ## Install
 
-Via [npm](https://npmjs.com/package/contenful-parsers)
+Via [npm](https://npmjs.com/package/contentful-parsers)
 
 ```sh
-npm install contenful-parsers
+npm install contentful-parsers
 ```
 
-Via [Yarn](http://yarn.fyi/contenful-parsers)
+Via [Yarn](http://yarn.fyi/contentful-parsers)
 
 ```sh
-yarn add contenful-parsers
+yarn add contentful-parsers
 ```
 
 ## Parsers
