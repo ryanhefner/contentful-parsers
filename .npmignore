@@ -5,3 +5,4 @@ tools
 src/.babelrc
 **/*.test.js
 rollup.config.js
+greenkeeper.json
