@@ -39,8 +39,8 @@ import { fieldsParser } from 'contentful-parsers';
 
 
 const client = contentful.createClient({
-  space: '',
-  accessToken: '',
+  space: '[SPACE_ID]',
+  accessToken: '[ACCESS_TOKEN]',
 });
 
 const response = await client.getEntry('[ENTRY_ID]');
