@@ -2,7 +2,7 @@
  * Flattens a Contentful data response, extracting the fields from child
  * objects and setting them to the parent name.
  *
- * @param {Object} data
+ * @param  {Object} data
  * @return {Object}
  */
 export default function (data) {
@@ -14,7 +14,7 @@ export default function (data) {
    * @return {boolean}
    */
   function emptyModel(object) {
-    return (
+    return !!(
       typeof object === 'object'
         && object.sys
         && Object.keys(object).length === 1
@@ -34,6 +34,8 @@ export default function (data) {
       return null;
     }
 
+    // If value is an object and only contains a sys property, just return null
+    // since it’s either an empty or unpublished entry
     if (emptyModel(value)) {
       return null;
     }
@@ -56,6 +58,7 @@ export default function (data) {
    * Parse over a fields object, parsing child fields or building rest of object.
    *
    * @param  {Object} fieldsObject - fields object to iterate over and flatten into objectRef
+   * @param  {Object} sys - sys object associated with fieldsObject
    * @param  {Object} objectRef - Compiled object that flattens the field objects
    * @return {Object}
    */
@@ -64,21 +67,30 @@ export default function (data) {
       return objectRef;
     }
 
+    const objectRefClone = Object.assign({}, objectRef);
+
+    // Iterate over fieldObject keys, rercursively parsing child objects that
+    // contain fields, or parsing non-fields-child objects/entries
     Object.keys(fieldsObject).forEach((key) => {
-      objectRef[key] = fieldsObject[key].fields
-        ? parseFields(fieldsObject[key].fields, objectRef[key])
+      objectRefClone[key] = fieldsObject[key].fields
+        ? parseFields(fieldsObject[key].fields, fieldsObject[key].sys, objectRefClone[key])
         : parseValue(fieldsObject[key]);
     });
 
     // Apply typeNameKey/value to each fields object to define the Contentful model type
-    if (sys && sys.contentType && sys.contentType.sys && sys.contentType.sys.id) {
+    const contentTypeId = sys
+      && sys.contentType
+      && sys.contentType.sys
+      && sys.contentType.sys.id;
+
+    if (!!contentTypeId) {
       /* eslint-disable */
-      objectRef['id'] = sys.id;
-      objectRef['__typename'] = sys.contentType.sys.id;
+      objectRefClone['id'] = sys.id;
+      objectRefClone['__typename'] = sys.contentType.sys.id;
       /* eslint-enable */
     }
 
-    return objectRef;
+    return objectRefClone;
   }
 
   return parseFields(data.fields, data.sys);
