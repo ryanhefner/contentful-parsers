@@ -5,7 +5,7 @@
  * @param  {Object} data
  * @return {Object}
  */
-export default function (data) {
+export default function (data, { include }) {
   /**
    * Check to see if the object passed is an object that contains only a `sys`
    * property and no feields. If so, either the model is empty, draft, or unpublished.
@@ -16,7 +16,7 @@ export default function (data) {
   function emptyModel(object) {
     return !!(
       typeof object === 'object'
-        && object.sys
+        && object.hasOwnProperty('sys')
         && Object.keys(object).length === 1
     );
   }
@@ -29,11 +29,7 @@ export default function (data) {
    * @param  {Object} object
    * @return {?any}
    */
-  function parseValue(value) {
-    if (!value) {
-      return null;
-    }
-
+  function parseValue(value, depth = 0) {
     // If value is an object and only contains a sys property, just return null
     // since it’s either an empty or unpublished entry
     if (emptyModel(value)) {
@@ -46,8 +42,8 @@ export default function (data) {
       })
       .map(item => {
         return item && typeof item === 'object' && item.fields
-          ? parseFields(item.fields, item.sys)
-          : parseValue(item);
+          ? parseFields(item.fields, item.sys, {}, depth + 1)
+          : parseValue(item, depth + 1);
        });
     }
 
@@ -62,8 +58,12 @@ export default function (data) {
    * @param  {Object} objectRef - Compiled object that flattens the field objects
    * @return {Object}
    */
-  function parseFields(fieldsObject, sys, objectRef = {}) {
+  function parseFields(fieldsObject, sys, objectRef = {}, depth = 0) {
     if (!fieldsObject || typeof fieldsObject !== 'object') {
+      return objectRef;
+    }
+
+    if (depth >= include) {
       return objectRef;
     }
 
@@ -73,8 +73,8 @@ export default function (data) {
     // contain fields, or parsing non-fields-child objects/entries
     Object.keys(fieldsObject).forEach((key) => {
       objectRefClone[key] = fieldsObject[key].fields
-        ? parseFields(fieldsObject[key].fields, fieldsObject[key].sys, objectRefClone[key])
-        : parseValue(fieldsObject[key]);
+        ? parseFields(fieldsObject[key].fields, fieldsObject[key].sys, objectRefClone[key], depth + 1)
+        : parseValue(fieldsObject[key], depth + 1);
     });
 
     // Apply typeNameKey/value to each fields object to define the Contentful model type
