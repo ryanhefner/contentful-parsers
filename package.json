@@ -27,6 +27,7 @@
   "main": "index.js",
   "module": "es/index.js",
   "jsnext:main": "src/index.js",
+  "types": "types",
   "scripts": {
     "clean": "rm -f index.js && rm -rf es && rm -rf umd && rm -rf parsers",
     "prebuild": "npm run clean",
@@ -35,6 +36,7 @@
     "prepare": "npm run build",
     "prepublishOnly": "node ./tools/build.js",
     "push-release": "git push origin master && git push --tags",
+    "dtslint": "dtslint types",
     "test": "jest"
   },
   "dependencies": {
@@ -53,6 +55,7 @@
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "babel-polyfill": "^6.26.0",
     "coveralls": "^3.0.3",
+    "dtslint": "^0.6.2",
     "greenkeeper-lockfile": "^1.15.1",
     "gzip-size": "^5.1.0",
     "jest": "^24.7.1",
