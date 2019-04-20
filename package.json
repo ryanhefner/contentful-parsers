@@ -55,7 +55,7 @@
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "babel-polyfill": "^6.26.0",
     "coveralls": "^3.0.3",
-    "dtslint": "^0.6.2",
+    "dtslint": "^0.7.0",
     "greenkeeper-lockfile": "^1.15.1",
     "gzip-size": "^5.1.0",
     "jest": "^24.7.1",
