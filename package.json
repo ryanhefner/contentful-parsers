@@ -18,6 +18,7 @@
     "es",
     "parsers",
     "src",
+    "types",
     "umd",
     "index.js"
   ],

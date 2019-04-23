@@ -1,7 +1,10 @@
 // TypeScript Version: 3.0
 
-import fieldsParser from './parsers/fieldsParser';
+/**
+ * fieldsParser
+ */
+export interface fieldsParserProps {
+  include: number;
+}
 
-export {
-  fieldsParser,
-};
+export function fieldsParser(data: any, props: fieldsParserProps): any;
