@@ -90,6 +90,16 @@ export default function (data, props = { include: 10 }) {
       /* eslint-enable */
     }
 
+    // Apply updatedAt
+    if (sys && sys.updatedAt) {
+      objectRefClone['updatedAt'] = sys.updatedAt;
+    }
+
+    // Apply createdAt
+    if (sys && sys.createdAt) {
+      objectRefClone['createdAt'] = sys.createdAt;
+    }
+
     return objectRefClone;
   }
 
