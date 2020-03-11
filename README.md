@@ -4,7 +4,7 @@
 [![npm](https://img.shields.io/npm/l/express.svg)](LICENSE)
 [![Coverage Status](https://coveralls.io/repos/github/ryanhefner/contentful-parsers/badge.svg?branch=master)](https://coveralls.io/github/ryanhefner/contentful-parsers?branch=master)
 [![CircleCI](https://circleci.com/gh/ryanhefner/contentful-parsers.svg?style=shield)](https://circleci.com/gh/ryanhefner/contentful-parsers)
-[![Greenkeeper badge](https://badges.greenkeeper.io/ryanhefner/contentful-parsers.svg)](https://greenkeeper.io/)
+
 
 Toolbox of useful parsers to use when working with Contentful API responses.
 
