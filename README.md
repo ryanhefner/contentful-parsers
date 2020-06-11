@@ -1,9 +1,9 @@
 # 🧰 contentful-parsers
 
-![npm](https://img.shields.io/npm/v/contentful-parsers?style=flat-square)
-![NPM](https://img.shields.io/npm/l/contentful-parsers?style=flat-square)
-![npm](https://img.shields.io/npm/dt/contentful-parsers?style=flat-square)
-![Coveralls github](https://img.shields.io/coveralls/github/ryanhefner/contentful-parsers?style=flat-square)
+[![npm](https://img.shields.io/npm/v/contentful-parsers?style=flat-square)](https://www.pkgstats.com/pkg:contentful-parsers)
+[![NPM](https://img.shields.io/npm/l/contentful-parsers?style=flat-square)](https://www.pkgstats.com/pkg:contentful-parsers)
+[![npm](https://img.shields.io/npm/dt/contentful-parsers?style=flat-square)](https://www.pkgstats.com/pkg:contentful-parsers)
+[![Coveralls github](https://img.shields.io/coveralls/github/ryanhefner/contentful-parsers?style=flat-square)](https://coveralls.io/github/ryanhefner/contentful-parsers)
 ![CircleCI](https://img.shields.io/circleci/build/github/ryanhefner/contentful-parsers?style=flat-square)
 ![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/ryanhefner/contentful-parsers?style=flat-square)
 
