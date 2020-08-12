@@ -1,8 +1,18 @@
+# Coverage reports
 coverage
+
+# Supporting directories
 docs
 site
+
+# Tooles
 tools
+
+# Configs
+.babelrc
 src/.babelrc
-**/*.test.js
 rollup.config.js
 greenkeeper.json
+
+# Test files
+**/*.test.js

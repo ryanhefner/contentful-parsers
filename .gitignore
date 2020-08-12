@@ -1,8 +1,17 @@
+# Misc
 .DS_Store
+
+# Coverage reports
 coverage
-es
+
+# Dependencies
 node_modules
-parsers
+
+# Build files/directories
+es
+/parsers
 umd
 /*.js
+
+# Include Rollup config
 !rollup.config.js
