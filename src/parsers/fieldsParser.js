@@ -5,7 +5,7 @@
  * @param  {Object} data
  * @return {Object}
  */
-export default function (data, props = { include: 10 }) {
+export default function fieldsParser(data, props = { include: 10 }) {
   /**
    * Check to see if the object passed is an object that contains only a `sys`
    * property and no feields. If so, either the model is empty, draft, or unpublished.
