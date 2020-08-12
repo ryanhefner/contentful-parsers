@@ -8,3 +8,13 @@ export interface fieldsParserProps {
 }
 
 export function fieldsParser(data: any, props: fieldsParserProps): any;
+
+/**
+ *  graphqlParser
+ */
+
+ export interface graphqlParserProps {
+   include: number;
+ }
+
+ export function graphqlParser(data: any, props: graphqlParserProps): any;
