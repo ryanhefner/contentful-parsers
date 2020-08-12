@@ -1,6 +1,5 @@
 import fieldsParser from './fieldsParser';
 
-let component;
 let data;
 
 describe('fieldsParser', () => {
