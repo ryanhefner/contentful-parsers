@@ -49,7 +49,7 @@ describe('graphqlParser', () => {
                 },
               },
             },
-            __typename: 'testType',
+            __typename: 'TestType',
             test: 'test',
           },
           {
@@ -62,7 +62,7 @@ describe('graphqlParser', () => {
                 },
               },
             },
-            __typename: 'testType',
+            __typename: 'TestType',
             test: 'test',
           }
         ]
@@ -96,7 +96,7 @@ describe('graphqlParser', () => {
             },
           },
         },
-        __typename: 'testType',
+        __typename: 'TestType',
         test: 'test',
       }
     });
