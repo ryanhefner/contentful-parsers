@@ -6,7 +6,7 @@ import { fieldsParser } from './fieldsParser'
  * @param {string} fieldName
  * @param {object} rootValue
  */
-export const contentfulResolver = async (fieldName, rootValue) => {
+export const contentfulResolver = (fieldName, rootValue) => {
   return rootValue.hasOwnProperty(fieldName) ? rootValue[fieldName] : null
 };
 
