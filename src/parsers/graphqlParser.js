@@ -1,6 +1,24 @@
-import fieldsParser from './fieldsParser'
+import { fieldsParser } from './fieldsParser'
 
-export default function graphqlParser(operationName, data, props = { include: 10 }) {
+/**
+ * Resolver to use when using graphqlParser output with graphql-anywhere.
+ *
+ * @param {string} fieldName
+ * @param {object} rootValue
+ */
+export const contentfulResolver = async (fieldName, rootValue) => {
+  return rootValue.hasOwnProperty(fieldName) ? rootValue[fieldName] : null
+};
+
+/**
+ * Parse Contentful Rest API response into a format that can be queried via
+ * GraphQL.
+ *
+ * @param {string} operationName
+ * @param {object} data
+ * @param {object} props
+ */
+export function graphqlParser(operationName, data, props = { include: 10 }) {
   function parseEntry(object) {
     const objectClone = Object.assign({}, fieldsParser(object, props));
 
