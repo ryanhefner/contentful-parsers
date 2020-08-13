@@ -18,3 +18,5 @@ export function fieldsParser(data: any, props: fieldsParserProps): any;
  }
 
  export function graphqlParser(data: any, props: graphqlParserProps): any;
+
+ export function contentfulResolver(fieldName: string, rootValue: any): any | null;
