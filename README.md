@@ -39,7 +39,6 @@ rendering.
 import contentful from 'contentful';
 import { fieldsParser } from 'contentful-parsers';
 
-
 const client = contentful.createClient({
   space: '[SPACE_ID]',
   accessToken: '[ACCESS_TOKEN]',
@@ -49,13 +48,50 @@ const response = await client.getEntry('[ENTRY_ID]');
 const data = fieldsParser(response);
 ```
 
-__Input__
 
-_Coming soon_
+### `graphqlParser`
+Takes a standard standard REST response from the Contentful API and restructures it
+to allow it to be queryable via a GraphQL query.
 
-__Output__
+Since this will probably commonly be used with `graphql-anywhere` for performing the
+queries against the parsed data, a basic resolver is included in the paackage as
+well, `contentfulResolver`.
 
-_Coming soon_
+#### How to use
+
+```js
+import { graphql } from 'graphql-anywhere/lib/async'
+import contentful from 'contentful';
+import { graphqlParser, contentfulResolver } from 'contentful-parsers';
+
+const entryQuery = gql`
+  entry {
+    sys {
+      id
+    }
+    title
+    copy
+  }
+`
+
+const client = contentful.createClient({
+  space: '[SPACE_ID]',
+  accessToken: '[ACCESS_TOKEN]',
+});
+
+const response = await client.getEntry('[ENTRY_ID]');
+const parsedData = graphqlParser('entry', response);
+
+graphql(
+  contentfulResolver,
+  entryQuery,
+  parsedData,
+)
+  .then(data => {
+    // data -> Contentful model filtered via GraphQL query
+  })
+  .catch(error => console.error(error));
+```
 
 
 ## License
