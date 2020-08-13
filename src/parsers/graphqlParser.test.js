@@ -1,4 +1,4 @@
-import graphqlParser from './graphqlParser';
+import { graphqlParser } from './graphqlParser';
 
 let data;
 
