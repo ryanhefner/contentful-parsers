@@ -14,10 +14,20 @@
     "url": "https://github.com/ryanhefner/contentful-parsers/issues"
   },
   "homepage": "https://github.com/ryanhefner/contentful-parsers#readme",
-  "funding": {
-    "type": "github",
-    "url": "https://github.com/sponsors/ryanhefner"
-  },
+  "funding": [
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/ryanhefner"
+    },
+    {
+      "type": "patreon",
+      "url": "https://www.patreon.com/ryanhefner"
+    },
+    {
+      "type": "opencollective",
+      "url": "https://opencollective.com/ryanhefner"
+    }
+  ],
   "files": [
     "es",
     "parsers",
