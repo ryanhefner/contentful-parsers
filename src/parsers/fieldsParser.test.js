@@ -1,4 +1,4 @@
-import fieldsParser from './fieldsParser';
+import { fieldsParser } from './fieldsParser';
 
 let data;
 
