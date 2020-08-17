@@ -35,12 +35,20 @@ export function graphqlParser(operationName, data, props = { include: 10 }) {
       } else if (typeof field === 'object' && field.hasOwnProperty('__typename')) {
         // Parse single entry references
         objectClone[key] = parseEntry(field)
+
+        // Delete refernece objects that are null/have no __typename
+        if (!objectClone[key]) {
+          delete objectClone[key]
+        }
       }
     })
 
     // Capitalize entry __typename
     if (objectClone.hasOwnProperty('__typename')) {
       objectClone.__typename = objectClone.__typename.substring(0, 1).toUpperCase() + objectClone.__typename.substring(1)
+    } else {
+      // If not __typename, return null and assume it will be cleaned up
+      return null
     }
 
     // Set sys __typename
@@ -62,7 +70,7 @@ export function graphqlParser(operationName, data, props = { include: 10 }) {
   function parseCollection(items) {
     return {
       __typename: 'Array',
-      items: items.map(item => parseEntry(item)),
+      items: items.map(item => parseEntry(item)).filter(item => !!item),
     };
   }
 
