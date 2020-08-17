@@ -3,7 +3,7 @@ import { graphqlParser } from './graphqlParser';
 let data;
 
 describe('graphqlParser', () => {
-  test('collection data pasered', () => {
+  test('collection data parsed', () => {
     data = graphqlParser('itemCollection', {
       items: [
         {
@@ -100,5 +100,16 @@ describe('graphqlParser', () => {
         test: 'test',
       }
     });
+  });
+
+  test('references will no __typename excluded', () => {
+    data = graphqlParser('item', {
+      sys: {
+        __typename: 'Sys',
+        id: 'testId',
+      }
+    })
+
+    expect(data).toEqual({ item: null });
   });
 });
