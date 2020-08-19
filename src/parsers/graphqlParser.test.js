@@ -102,14 +102,20 @@ describe('graphqlParser', () => {
     });
   });
 
-  test('references will no __typename excluded', () => {
+  test('selection definitions applied to returned shape', () => {
     data = graphqlParser('item', {
       sys: {
-        __typename: 'Sys',
         id: 'testId',
       }
     })
 
-    expect(data).toEqual({ item: null });
+    expect(data).toEqual({
+      item: {
+        sys: {
+          __typename: 'Sys',
+          id: 'testId',
+        }
+      }
+    });
   });
 });
