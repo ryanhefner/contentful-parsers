@@ -5,7 +5,11 @@
  * @param  {Object} data
  * @return {Object}
  */
-export function fieldsParser(data, props = { include: 10 }) {
+export function fieldsParser(
+  data,
+  props = { include: 10 },
+  options = { parseArrays: true, parseRefs: true },
+) {
   /**
    * Check to see if the object passed is an object that contains only a `sys`
    * property and no feields. If so, either the model is empty, draft, or unpublished.
@@ -36,7 +40,7 @@ export function fieldsParser(data, props = { include: 10 }) {
       return null;
     }
 
-    if (Array.isArray(value)) {
+    if (Array.isArray(value) && options.parseArrays) {
       return value.filter(item => {
         return !emptyModel(item);
       })
@@ -72,7 +76,7 @@ export function fieldsParser(data, props = { include: 10 }) {
     // Iterate over fieldObject keys, rercursively parsing child objects that
     // contain fields, or parsing non-fields-child objects/entries
     Object.keys(fieldsObject).forEach((key) => {
-      objectRefClone[key] = fieldsObject[key].fields
+      objectRefClone[key] = fieldsObject[key].fields && options.parseRefs
         ? parseFields(fieldsObject[key].fields, fieldsObject[key].sys, objectRefClone[key], depth + 1)
         : parseValue(fieldsObject[key], depth + 1);
     });
@@ -83,7 +87,7 @@ export function fieldsParser(data, props = { include: 10 }) {
       && sys.contentType.sys
       && sys.contentType.sys.id;
 
-    if (!!contentTypeId) {
+    if (contentTypeId) {
       /* eslint-disable */
       objectRefClone['id'] = sys.id;
       objectRefClone['__typename'] = sys.contentType.sys.id;
@@ -103,5 +107,7 @@ export function fieldsParser(data, props = { include: 10 }) {
     return objectRefClone;
   }
 
-  return parseFields(data.fields, data.sys);
+  const dataClone = Object.assign({}, data);
+
+  return parseFields(dataClone.fields, dataClone.sys);
 }
