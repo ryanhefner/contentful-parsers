@@ -1,6 +1,6 @@
 {
   "name": "contentful-parsers",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Library of useful parsers to use when working with Contentful API responses.",
   "repository": "ryanhefner/contentful-parsers.git",
   "keywords": [
