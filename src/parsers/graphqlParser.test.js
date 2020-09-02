@@ -65,8 +65,9 @@ describe('graphqlParser', () => {
             __typename: 'TestType',
             test: 'test',
           }
-        ]
-      }
+        ],
+        total: 2,
+      },
     });
   });
 
