@@ -16,15 +16,15 @@ export const contentfulResolver = (fieldName, rootValue) => {
  *
  * @param {string} operationName
  * @param {object} data
- * @param {object} definitionMap
  * @param {object} props
+ * @return {object}
  */
-export function graphqlParser(operationName, data, definitionMap, props = { include: 10 }) {
+export function graphqlParser(rootField, data, definitionMap, props = { include: 10 }) {
   /**
-   * Apply `sys` object back to model that was stripped via the fieldsParser and remove
-   * `id`, `createdAt`, and `updatedAt` values that were extracted and applied from `sys`
-   * @param {object} clone
-   * @param {object} ref
+   * Clean the cloned object and map back refernces that were stripped via fieldsParser.
+   *
+   * @param {object} clone -
+   * @param {object} ref -
    * @return {object}
    */
   function cleanClone(clone, ref) {
@@ -64,24 +64,27 @@ export function graphqlParser(operationName, data, definitionMap, props = { incl
     return clone
   }
 
-
+  /**
+   * Apply definitions defined in query to confirm that the resulting object
+   * adheres to the shape expected by the query.
+   *
+   * @param {object} target -
+   * @param {object} definitionMap -
+   * @return {object}
+   */
   function applyDefinitions(target, definitionMap) {
     if (!target || !definitionMap) return target
 
     const targetClone = Object.assign({}, target)
 
     Object.keys(definitionMap).forEach(definition => {
-      if (definition.startsWith('...')) {
-        applyDefinitions(targetClone, definitionMap[definition])
-      } else {
-        if (!targetClone.hasOwnProperty(definition)) {
-          if (definition.endsWith('Collection')) {
-            targetClone[definition] = parseCollection([], definitionMap[definition])
-          } else {
-            targetClone[definition] = definitionMap?.[definition]
-          }
-        } else if (typeof definitionMap[definition] === 'object') {
-          targetClone[definition] = applyDefinitions(targetClone[definition], definitionMap[definition])
+      if (!targetClone.hasOwnProperty(definition)) {
+        if (definition.endsWith('Collection') && definitionMap[definition].items) {
+          targetClone[definition] = parseCollection([], definitionMap[definition])
+        } else if (definition.startsWith('...')) {
+          targetClone[definition] = applyDefinitions({}, definitionMap[definition])
+        } else {
+          targetClone[definition] = definitionMap[definition]
         }
       }
     })
@@ -89,7 +92,39 @@ export function graphqlParser(operationName, data, definitionMap, props = { incl
     return targetClone
   }
 
+  /**
+   * Structure Contentful Asset instance into the shape supported via GraphQL.
+   *
+   * @param {object} object -
+   * @return {object}
+   */
+  function parseAsset(object) {
+    const clone = Object.assign({}, object)
+
+    clone.__typename = 'Asset'
+    clone.url = clone?.file?.url
+    clone.contentType = clone?.file?.contentType
+    clone.size = clone?.file?.details?.size
+    clone.width = clone?.file?.details?.image?.width || clone?.file?.details?.video?.width
+    clone.height = clone?.file?.details?.image?.height || clone?.file?.details?.video?.height
+    clone.fileName = clone?.file?.fileName
+
+    delete clone.file
+
+    return clone
+  }
+
+  /**
+   * Parse a Contentful Entry instance
+   *
+   * @param {object} object -
+   * @param {object} definitionMap -
+   * @param {number} depth -
+   * @return {object}
+   */
   function parseEntry(object, definitionMap, depth = 0) {
+    if (!object) return null
+
     if (depth >= props.include) {
       return object
     }
@@ -120,16 +155,12 @@ export function graphqlParser(operationName, data, definitionMap, props = { incl
         if (referenceArray) {
           // Convert reference array into GraphQL
           const collectionKey = `${key}Collection`
-          objectClone[collectionKey] = parseCollection(field, definitionMap && definitionMap[collectionKey], depth + 1)
-
-          if (!objectClone[collectionKey]?.items?.length) {
-            delete objectClone[collectionKey]
-          }
+          objectClone[collectionKey] = parseCollection(field, definitionMap?.[collectionKey], depth + 1);
 
           // Delete old flat array field
           delete objectClone[key];
         } else {
-          objectClone[key] = field.map((item, index) => cleanClone(item, object[key][index]))
+          objectClone[key] = field.map((item, index) => cleanClone(item, object.fields[key][index]))
         }
       } else if (
         typeof field === 'object' &&
@@ -139,7 +170,7 @@ export function graphqlParser(operationName, data, definitionMap, props = { incl
         )
       ) {
         // Parse single entry references
-        objectClone[key] = parseEntry(field, definitionMap && definitionMap[key], depth + 1)
+        objectClone[key] = parseEntry(field, definitionMap?.[key], depth + 1)
       } else {
         objectClone[key] = field
       }
@@ -148,28 +179,45 @@ export function graphqlParser(operationName, data, definitionMap, props = { incl
     // Clean fields applied by fieldsParser and map sys object to item
     const cleanedClone = cleanClone(objectClone, object)
 
+    const assetClone = cleanedClone?.sys?.type === 'Asset'
+      ? parseAsset(cleanedClone)
+      : cleanedClone
+
     // Make sure all queried fields are available on the response, even if not included in the Rest response
-    const definedClone = applyDefinitions(cleanedClone, definitionMap)
+    const definedClone = applyDefinitions(assetClone, definitionMap)
 
     // Return GraphQL-ready object
-    return definedClone
+    return definedClone;
   }
 
-  // Structure entry collections object
-  function parseCollection(items = [], definitionMap = null, depth = 0) {
+  /**
+   * Parse a Contentful Entry collection
+   *
+   * @param {array} items -
+   * @param {object} definitionMap -
+   * @param {number} depth -
+   * @return {object}
+   */
+  function parseCollection(items = [], definitionMap, depth = 0) {
+    // @todo Add `skip` to response object - Ryan
+    // @todo Add `limit` to resposne object - Ryan
     return {
       __typename: 'Array',
-      items: items.map(item => parseEntry(item, definitionMap && definitionMap.items, depth)).filter(item => !!item),
+      total: (items || []).length,
+      items: (items || []).map(
+          item => parseEntry(item, definitionMap?.items, depth)
+        )
+        .filter(item => !!item),
     };
   }
 
   // Parse collection queries
-  if (data.items) {
+  if (data?.items) {
     return {
-      [operationName]: parseCollection(data.items, definitionMap && definitionMap[operationName]),
+      [rootField]: parseCollection(data.items, definitionMap?.[rootField]),
     }
   }
 
   // Parse single entry queries
-  return { [operationName]: parseEntry(data, definitionMap && definitionMap[operationName]) }
+  return { [rootField]: parseEntry(data, definitionMap?.[rootField]) }
 }
