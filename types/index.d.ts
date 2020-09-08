@@ -17,6 +17,6 @@ export function fieldsParser(data: any, props: fieldsParserProps): any;
    include: number;
  }
 
- export function graphqlParser(rootField: string, data: any, definitionMap: any, props: graphqlParserProps): any;
+ export function graphqlParser(rootField: string, data: any, definitionMap?: any, props?: graphqlParserProps): any;
 
  export function contentfulResolver(fieldName: string, rootValue: any): any | null;
