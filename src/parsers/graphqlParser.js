@@ -7,7 +7,7 @@ import { fieldsParser } from './fieldsParser'
  * @param {object} rootValue
  */
 export const contentfulResolver = (fieldName, rootValue) => {
-  return rootValue.hasOwnProperty(fieldName) ? rootValue[fieldName] : null
+  return rootValue && rootValue.hasOwnProperty(fieldName) ? rootValue[fieldName] : null
 };
 
 /**
@@ -19,7 +19,7 @@ export const contentfulResolver = (fieldName, rootValue) => {
  * @param {object} props
  * @return {object}
  */
-export function graphqlParser(rootField, data, definitionMap, props = { include: 10 }) {
+export function graphqlParser(rootKey, data, definitionMap, props = { include: 10 }) {
   /**
    * Clean the cloned object and map back refernces that were stripped via fieldsParser.
    *
@@ -214,10 +214,10 @@ export function graphqlParser(rootField, data, definitionMap, props = { include:
   // Parse collection queries
   if (data?.items) {
     return {
-      [rootField]: parseCollection(data.items, definitionMap?.[rootField]),
+      [rootKey]: parseCollection(data.items, definitionMap?.[rootKey]),
     }
   }
 
   // Parse single entry queries
-  return { [rootField]: parseEntry(data, definitionMap?.[rootField]) }
+  return { [rootKey]: parseEntry(data, definitionMap?.[rootKey]) }
 }
