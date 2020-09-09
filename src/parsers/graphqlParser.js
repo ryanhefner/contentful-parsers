@@ -75,7 +75,7 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
   function applyDefinitions(target, definitionMap) {
     if (!target || !definitionMap) return target
 
-    const targetClone = Object.assign({}, target)
+    const targetClone = Object.assign({}, (target || {}))
 
     Object.keys(definitionMap).forEach(definition => {
       if (!targetClone.hasOwnProperty(definition)) {
@@ -143,14 +143,16 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
       if (Array.isArray(field)) {
         let referenceArray = false
 
-        field.forEach(item => {
-          if (
-            (item.hasOwnProperty('sys') && item.hasOwnProperty('fields')) ||
-            item.hasOwnProperty('__typename')
-          ) {
-            referenceArray = true
-          }
-        })
+        field
+          .filter(item => !!item)
+          .forEach(item => {
+            if (
+              (item.hasOwnProperty('sys') && item.hasOwnProperty('fields')) ||
+              item.hasOwnProperty('__typename')
+            ) {
+              referenceArray = true
+            }
+          })
 
         if (referenceArray) {
           // Convert reference array into GraphQL
@@ -162,7 +164,7 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
         } else {
           objectClone[key] = field.map((item, index) => cleanClone(item, object.fields[key][index]))
         }
-      } else if (
+      } else if (field &&
         typeof field === 'object' &&
         (
           field.hasOwnProperty('__typename')
