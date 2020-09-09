@@ -4,6 +4,7 @@ const building = BABEL_ENV != undefined && BABEL_ENV !== 'cjs';
 const plugins = [
   '@babel/plugin-proposal-class-properties',
   '@babel/plugin-proposal-object-rest-spread',
+  '@babel/plugin-proposal-optional-chaining',
   '@babel/plugin-transform-runtime',
 ];
 
