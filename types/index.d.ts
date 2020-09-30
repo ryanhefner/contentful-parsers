@@ -7,7 +7,12 @@ export interface fieldsParserProps {
   include: number;
 }
 
-export function fieldsParser(data: any, props: fieldsParserProps): any;
+export interface fieldParserOptions {
+  parseArrays?: boolean;
+  parseRefs?: boolean;
+}
+
+export function fieldsParser(data: any, props?: fieldsParserProps, options?: fieldParserOptions): any;
 
 /**
  *  graphqlParser
