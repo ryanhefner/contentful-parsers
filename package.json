@@ -52,7 +52,8 @@
     "prepublishOnly": "node ./tools/build.js",
     "push-release": "git push origin master && git push --tags",
     "dtslint": "dtslint types",
-    "test": "jest"
+    "test": "jest",
+    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand"
   },
   "dependencies": {
     "@babel/runtime": "^7.11.2"
