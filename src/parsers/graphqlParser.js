@@ -1,5 +1,9 @@
 import { fieldsParser } from './fieldsParser'
 
+const capitalizeFirstLetter = (string) => {
+  return string.substring(0, 1).toUpperCase() + string.substring(1)
+}
+
 /**
  * Resolver to use when using graphqlParser output with graphql-anywhere.
  *
@@ -32,7 +36,7 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
 
     // Capitalize entry __typename
     if (clone.hasOwnProperty('__typename') && clone.__typename) {
-      clone.__typename = clone.__typename.substring(0, 1).toUpperCase() + clone.__typename.substring(1)
+      clone.__typename = capitalizeFirstLetter(clone.__typename)
     }
 
     // Set sys __typename
@@ -75,14 +79,21 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
   function applyDefinitions(target, definitionMap) {
     if (!target || !definitionMap) return target
 
-    const targetClone = Object.assign({}, (target || {}))
+    let targetClone = Object.assign({}, (target || {}))
 
     Object.keys(definitionMap).forEach(definition => {
       if (!targetClone.hasOwnProperty(definition)) {
-        if (definition.endsWith('Collection') && definitionMap[definition].items) {
-          targetClone[definition] = parseCollection([], definitionMap[definition])
+        if (definition.endsWith('Collection')) {
+          const collectionField = definition.replace('Collection', '')
+          const existingCollection = targetClone.hasOwnProperty(collectionField) && targetClone[collectionField]
+          if (existingCollection) {
+            targetClone[definition] = parseCollection(existingCollection, capitalizeFirstLetter(definition), definitionMap[definition])
+            delete targetClone[collectionField]
+          } else {
+            targetClone[definition] = parseCollection([], capitalizeFirstLetter(definition), definitionMap[definition])
+          }
         } else if (definition.startsWith('...')) {
-          targetClone[definition] = applyDefinitions({}, definitionMap[definition])
+          Object.assign(targetClone, applyDefinitions(targetClone, definitionMap[definition]))
         } else {
           targetClone[definition] = definitionMap[definition]
         }
@@ -157,7 +168,7 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
         if (referenceArray) {
           // Convert reference array into GraphQL
           const collectionKey = `${key}Collection`
-          objectClone[collectionKey] = parseCollection(field, definitionMap?.[collectionKey], depth + 1);
+          objectClone[collectionKey] = parseCollection(field, capitalizeFirstLetter(collectionKey), definitionMap?.[collectionKey], depth + 1);
 
           // Delete old flat array field
           delete objectClone[key];
@@ -200,11 +211,11 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
    * @param {number} depth -
    * @return {object}
    */
-  function parseCollection(items = [], definitionMap, depth = 0) {
+  function parseCollection(items = [], typename, definitionMap, depth = 0) {
     // @todo Add `skip` to response object - Ryan
-    // @todo Add `limit` to resposne object - Ryan
+    // @todo Add `limit` to response object - Ryan
     return {
-      __typename: 'Array',
+      __typename: typename,
       total: (items || []).length,
       items: (items || []).map(
           item => parseEntry(item, definitionMap?.items, depth)
@@ -216,10 +227,14 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
   // Parse collection queries
   if (data?.items) {
     return {
-      [rootKey]: parseCollection(data.items, definitionMap?.[rootKey]),
+      [rootKey]: parseCollection(data.items, capitalizeFirstLetter(rootKey), definitionMap?.[rootKey]),
     }
   }
 
   // Parse single entry queries
-  return { [rootKey]: parseEntry(data, definitionMap?.[rootKey]) }
+  return { [rootKey]: {
+      __typename: capitalizeFirstLetter(rootKey),
+      ...parseEntry(data, definitionMap?.[rootKey])
+    }
+  }
 }
