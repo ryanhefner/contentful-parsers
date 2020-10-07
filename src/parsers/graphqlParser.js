@@ -216,8 +216,8 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
     // @todo Add `limit` to response object - Ryan
     return {
       __typename: typename,
-      total: (items || []).length,
-      items: (items || []).map(
+      total: (items && Array.isArray(items) ? items : []).length,
+      items: (items && Array.isArray(items) ? items : []).map(
           item => parseEntry(item, definitionMap?.items, depth)
         )
         .filter(item => !!item),
