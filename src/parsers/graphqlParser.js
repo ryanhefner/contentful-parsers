@@ -120,6 +120,10 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
     clone.height = clone?.file?.details?.image?.height || clone?.file?.details?.video?.height
     clone.fileName = clone?.file?.fileName
 
+    if (!clone.url.startsWith('https:')) {
+      clone.url = `https:${clone.url}`
+    }
+
     delete clone.file
 
     return clone
