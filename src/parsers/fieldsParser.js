@@ -19,7 +19,8 @@ export function fieldsParser(
    */
   function emptyModel(object) {
     return !!(
-      typeof object === 'object'
+      object
+        && typeof object === 'object'
         && object.hasOwnProperty('sys')
         && Object.keys(object).length === 1
     );
