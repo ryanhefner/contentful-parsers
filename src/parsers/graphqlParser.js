@@ -168,13 +168,18 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
         if (referenceArray) {
           // Convert reference array into GraphQL
           const collectionKey = `${key}Collection`
-          objectClone[collectionKey] = parseCollection(field, `${typename}${capitalizeFirstLetter(collectionKey)}`, definitionMap?.[collectionKey], depth + 1);
+          objectClone[collectionKey] = parseCollection(
+            field,
+            `${typename}${capitalizeFirstLetter(collectionKey)}`,
+            definitionMap?.[collectionKey],
+            depth + 1
+          );
 
           // Delete old flat array field
           delete objectClone[key];
         } else {
           objectClone[key] = field
-            .map((item, index) => cleanClone(item, object?.fields[key][index]))
+            .map((item, index) => cleanClone(item, object && object.fields && object.fields[key][index]))
             .filter(item => !!item)
         }
       } else if (field &&
