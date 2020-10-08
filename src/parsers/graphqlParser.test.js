@@ -314,7 +314,6 @@ describe('graphqlParser', () => {
                   type: "Link",
                 },
               },
-              createdAt: "2020-10-06T20:51:57.359Z",
               environment: {
                 sys: {
                   id: "master",
@@ -322,8 +321,10 @@ describe('graphqlParser', () => {
                   type: "Link",
                 },
               },
+              firstPublishedAt: "2020-10-06T20:51:57.359Z",
               id: "4oB6Wn7uraF4N3uVSbjkoS",
               locale: "en-US",
+              publishedAt: "2020-10-06T20:51:57.359Z",
               revision: 1,
               space: {
                 sys: {
@@ -333,7 +334,6 @@ describe('graphqlParser', () => {
                 },
               },
               type: "Entry",
-              updatedAt: "2020-10-06T20:51:57.359Z",
             },
             title: 'Empty Lesson',
           },
