@@ -76,7 +76,7 @@ export function fieldsParser(
     // Iterate over fieldObject keys, rercursively parsing child objects that
     // contain fields, or parsing non-fields-child objects/entries
     Object.keys(fieldsObject).forEach((key) => {
-      objectRefClone[key] = fieldsObject[key].fields && options.parseRefs
+      objectRefClone[key] = fieldsObject[key] && fieldsObject[key].fields && options.parseRefs
         ? parseFields(fieldsObject[key].fields, fieldsObject[key].sys, objectRefClone[key], depth + 1)
         : parseValue(fieldsObject[key], depth + 1);
     });
