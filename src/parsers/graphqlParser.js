@@ -76,7 +76,7 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
    * @param {object} definitionMap -
    * @return {object}
    */
-  function applyDefinitions(target, definitionMap) {
+  function applyDefinitions(target, typename, definitionMap) {
     if (!target || !definitionMap) return target
 
     let targetClone = Object.assign({}, (target || {}))
@@ -87,15 +87,15 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
           const collectionField = definition.replace('Collection', '')
           const existingCollection = targetClone.hasOwnProperty(collectionField) && targetClone[collectionField]
           if (existingCollection) {
-            targetClone[definition] = parseCollection(existingCollection, capitalizeFirstLetter(definition), definitionMap[definition])
+            targetClone[definition] = parseCollection(existingCollection, `${typename}${capitalizeFirstLetter(definition)}`, definitionMap[definition])
             delete targetClone[collectionField]
           } else {
-            targetClone[definition] = parseCollection([], capitalizeFirstLetter(definition), definitionMap[definition])
+            targetClone[definition] = parseCollection([], `${typename}${capitalizeFirstLetter(definition)}`, definitionMap[definition])
           }
-        } else if (definition.startsWith('...')) {
-          Object.assign(targetClone, applyDefinitions(targetClone, definitionMap[definition]))
+        } else if (definition.startsWith('...') && targetClone.__typename && targetClone.__typename === definition.replace('...', '')) {
+          Object.assign(targetClone, applyDefinitions(targetClone, typename, definitionMap[definition]))
         } else {
-          targetClone[definition] = definitionMap[definition]
+          targetClone[definition] = null
         }
       }
     })
@@ -133,7 +133,7 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
    * @param {number} depth -
    * @return {object}
    */
-  function parseEntry(object, definitionMap, depth = 0) {
+  function parseEntry(object, typename, definitionMap, depth = 0) {
     if (!object) return null
 
     if (depth >= props.include) {
@@ -168,12 +168,14 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
         if (referenceArray) {
           // Convert reference array into GraphQL
           const collectionKey = `${key}Collection`
-          objectClone[collectionKey] = parseCollection(field, capitalizeFirstLetter(collectionKey), definitionMap?.[collectionKey], depth + 1);
+          objectClone[collectionKey] = parseCollection(field, `${typename}${capitalizeFirstLetter(collectionKey)}`, definitionMap?.[collectionKey], depth + 1);
 
           // Delete old flat array field
           delete objectClone[key];
         } else {
-          objectClone[key] = field.map((item, index) => cleanClone(item, object.fields[key][index]))
+          objectClone[key] = field
+            .map((item, index) => cleanClone(item, object?.fields[key][index]))
+            .filter(item => !!item)
         }
       } else if (field &&
         typeof field === 'object' &&
@@ -183,7 +185,7 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
         )
       ) {
         // Parse single entry references
-        objectClone[key] = parseEntry(field, definitionMap?.[key], depth + 1)
+        objectClone[key] = parseEntry(field, typename, definitionMap?.[key], depth + 1)
       } else {
         objectClone[key] = field
       }
@@ -197,7 +199,7 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
       : cleanedClone
 
     // Make sure all queried fields are available on the response, even if not included in the Rest response
-    const definedClone = applyDefinitions(assetClone, definitionMap)
+    const definedClone = applyDefinitions(assetClone, assetClone.__typename || typename, definitionMap)
 
     // Return GraphQL-ready object
     return definedClone;
@@ -218,7 +220,7 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
       __typename: typename,
       total: (items && Array.isArray(items) ? items : []).length,
       items: (items && Array.isArray(items) ? items : []).map(
-          item => parseEntry(item, definitionMap?.items, depth)
+          item => parseEntry(item, typename, definitionMap?.items, depth)
         )
         .filter(item => !!item),
     };
@@ -234,7 +236,7 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
   // Parse single entry queries
   return { [rootKey]: {
       __typename: capitalizeFirstLetter(rootKey),
-      ...parseEntry(data, definitionMap?.[rootKey])
+      ...parseEntry(data, capitalizeFirstLetter(rootKey), definitionMap?.[rootKey])
     }
   }
 }
