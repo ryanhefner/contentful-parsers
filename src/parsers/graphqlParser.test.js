@@ -189,25 +189,26 @@ describe('graphqlParser', () => {
     });
   });
 
-  test.skip('collection empty items data when nested when field exists', () => {
-    data = graphqlParser('pageContainer', {
-      items: [],
-    }, {
+  test('collection empty items data when nested when field exists', () => {
+    data = graphqlParser('pageContainer', {}, {
       pageContainer: {
         itemsCollection: {},
+        ref: {
+          title: null,
+          description: null,
+        },
       },
     });
-
-    console.debug(data)
 
     expect(data).toEqual({
       pageContainer: {
         __typename: 'PageContainer',
         itemsCollection: {
-          __typename: 'ItemsCollection',
+          __typename: 'PageContainerItemsCollection',
           items: [],
           total: 0,
         },
+        ref: null,
       },
     });
   });
@@ -223,7 +224,7 @@ describe('graphqlParser', () => {
       pageContainer: {
         __typename: 'PageContainer',
         itemsCollection: {
-          __typename: 'ItemsCollection',
+          __typename: 'PageContainerItemsCollection',
           items: [],
           total: 0,
         },
@@ -299,7 +300,7 @@ describe('graphqlParser', () => {
           {
             __typename: 'Lesson',
             modulesCollection: {
-              __typename: 'ModulesCollection',
+              __typename: 'LessonModulesCollection',
               items: [],
               total: 0,
             },
