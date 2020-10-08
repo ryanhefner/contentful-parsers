@@ -52,6 +52,17 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
       }
     }
 
+    // Map dates to GraphQL equivalents
+    if (clone.sys.createdAt) {
+      clone.sys.firstPublishedAt = clone.sys.createdAt
+      delete clone.sys.createdAt
+    }
+
+    if (clone.sys.updatedAt) {
+      clone.sys.publishedAt = clone.sys.updatedAt
+      delete clone.sys.updatedAt
+    }
+
     // Clean-up sys properties applied to parsed entry via fieldsParser
     if (clone.id) {
       delete clone.id
