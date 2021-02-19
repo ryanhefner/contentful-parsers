@@ -12,7 +12,7 @@ const capitalizeFirstLetter = (string) => {
  */
 export const contentfulResolver = (fieldName, rootValue) => {
   return rootValue && rootValue.hasOwnProperty(fieldName) ? rootValue[fieldName] : null
-};
+}
 
 /**
  * Parse Contentful Rest API response into a format that can be queried via
@@ -166,7 +166,7 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
       object.hasOwnProperty('sys') && object.hasOwnProperty('fields')
         ? fieldsParser(object, props, { parseArrays: false, parseRefs: false })
         : object
-    );
+    )
 
     // Parse all references and reference collections
     Object.keys(objectClone).forEach(key => {
@@ -194,10 +194,10 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
             `${typename}${capitalizeFirstLetter(collectionKey)}`,
             definitionMap?.[collectionKey],
             depth + 1
-          );
+          )
 
           // Delete old flat array field
-          delete objectClone[key];
+          delete objectClone[key]
         } else {
           objectClone[key] = field
             .map((item, index) => cleanClone(item, object && object.fields && object.fields[key][index]))
@@ -232,7 +232,7 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
     const definedClone = applyDefinitions(assetClone, assetClone.__typename || typename, definitionMap)
 
     // Return GraphQL-ready object
-    return definedClone;
+    return definedClone
   }
 
   /**
@@ -253,7 +253,7 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
           item => parseEntry(item, typename, definitionMap?.items, depth)
         )
         .filter(item => !!item),
-    };
+    }
   }
 
   // Parse collection queries
