@@ -212,6 +212,10 @@ export function graphqlParser(rootKey, data, definitionMap, props = { include: 1
       ) {
         // Parse single entry references
         objectClone[key] = parseEntry(field, typename, definitionMap?.[key], depth + 1)
+      } else if (field && field.nodeType && field.nodeType === 'document') {
+        objectClone[key] = {
+          json: field,
+        }
       } else {
         objectClone[key] = field
       }
